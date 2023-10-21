@@ -11,6 +11,7 @@ using static Cinemachine.CinemachineOrbitalTransposer;
 public class PlayerController : Entity
 {
     public CharacterController cc;
+    public IWeapon weapon2;
     //인풋
     //public bool isInput = false;
     //카메라 방향으로 회전 가능 여부
@@ -32,8 +33,21 @@ public class PlayerController : Entity
     public int fHpHeal = 40;
     public int healNum;
     public int healNumMax = 3;
-    #region FSM
 
+
+    #region FSM
+    enum PlayerStateNum
+    {
+        MoveState = 0,
+        JumpState = 1,
+        FallState = 2,
+        LandState = 3,
+        AttackState = 4,
+        HitState = 5,
+        DodgeState = 6,
+        DeathState = 7,
+        HealState = 8
+    }
     public MoveState moveState { get; private set; }
     public JumpState jumpState { get; private set; }
     public FallState fallState { get; private set; }
@@ -61,36 +75,42 @@ public class PlayerController : Entity
     //무기 교체
     public GameObject weapon;
     public Transform weaponPos;
+    public WeaponCol weaponcol;
 
     private void Awake()
     {
         base.Awake();
         #region FSM_Initialize
-        moveState = new MoveState(this, 0);
-        jumpState = new JumpState(this, 1);
-        fallState = new FallState(this, 2);
-        landState = new LandState(this, 3);
-        attackState = new AttackState(this, 4);
-        hitState = new HitState(this, 5);
-        dodgeState = new DodgeState(this, 6);
-        deathState = new DeathState(this, 7);
-        healState = new HealState(this, 8);
+        moveState = new MoveState(this, (int)PlayerStateNum.MoveState);
+        jumpState = new JumpState(this, (int)PlayerStateNum.JumpState);
+        fallState = new FallState(this, (int)PlayerStateNum.FallState);
+        landState = new LandState(this, (int)PlayerStateNum.LandState);
+        attackState = new AttackState(this, (int)PlayerStateNum.AttackState);
+        hitState = new HitState(this, (int)PlayerStateNum.HitState);
+        dodgeState = new DodgeState(this, (int)PlayerStateNum.DodgeState);
+        deathState = new DeathState(this, (int)PlayerStateNum.DeathState);
+        healState = new HealState(this, (int)PlayerStateNum.HealState);
         #endregion
         healNum = healNumMax;
+        weapon2 = new IGreatSword();
     }
 
     protected override void Start()
     {
         base.Start();
+        weapon2.Attack();
         cc = GetComponent<CharacterController>();
         groundChheckObject = GameObject.Find("GroundCheck");
         stateMachine.ChangeState(moveState);
         //이건 나중에 바꿔야지
         //attackDagame = UIScript.instance.playerAttackDagame[0];
         ChangeWeapon(weapon);
+        weaponcol = GetComponentInChildren<WeaponCol>();
+        Cursor.lockState = CursorLockMode.Locked;
+
     }
 
-    
+
     protected void Update()
     {
         stateMachine.Update();
@@ -227,5 +247,14 @@ public class PlayerController : Entity
     public void ChangeWeapon(GameObject _gameObject)
     {
         GameObject _newWeapon = Instantiate(_gameObject, weaponPos);
+    }
+    //void OnCollisionEnter(Collision collision)
+    //{
+    //    Debug.Log(collision.gameObject.tag);
+
+    //}
+    void OnTriggerEnter(Collider collision)
+    {
+        Debug.Log(collision.tag);
     }
 }

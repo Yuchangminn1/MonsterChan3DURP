@@ -7,7 +7,7 @@ public class BossAnimationTrigger : MonoBehaviour
     Animator animator;
     [SerializeField] ParticleSystem[] fireBreathR;
     [SerializeField] ParticleSystem[] fireBreathL;
-    [SerializeField] BoxCollider2D damageCol;
+    //[SerializeField] BoxCollider2D damageCol;
 
     Boss boss;
     public int attackDamage;
@@ -52,7 +52,8 @@ public class BossAnimationTrigger : MonoBehaviour
 
     void ColliderOn()
     {
-        damageCol.enabled = true;
+        //damageCol.enabled = true;
+        ;
         //if (boxCollider[_index] != null)
         //{
         //    boss.ZeroVelocityX();
@@ -66,11 +67,11 @@ public class BossAnimationTrigger : MonoBehaviour
     }
     void ColliderOff()
     {
-        damageCol.enabled = false;
-
+        // damageCol.enabled = false;
+        ;
         //if (boxCollider[_index] != null)
         //{
-        //    boxCollider[_index].enabled = false;
+        //    boxCollider[_index].enabled   false;
         //}
         //else
         //{
@@ -85,11 +86,11 @@ public class BossAnimationTrigger : MonoBehaviour
     }
     void ChasePlayer()
     {
-        if (boss.AbleAttackCheck())
-        {
-            boss.animationTrigger = true;
+        //if (boss.AbleAttackCheck())
+        //{
+        //    boss.animationTrigger = true;
 
-        }
+        //}
     }
 
     void BackStep()

@@ -23,5 +23,13 @@ public class PlayerAnimationTrigger : MonoBehaviour
     {
         player.animationTrigger = false;
     }
-    
+    public void WeaponColOn()
+    {
+        player.weaponcol.WeaponColOn();
+    }
+    public void WeaponColOff()
+    {
+        player.weaponcol.WeaponColOff();
+
+    }
 }

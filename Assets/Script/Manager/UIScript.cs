@@ -23,13 +23,15 @@ public class UIScript : MonoBehaviour
     [SerializeField] Slider hpBar;
     [SerializeField] Image hpBarImage;
     [SerializeField] Image[] hpHealNumImage;
-    [SerializeField] ParticleSystem[] playerParticle;
+    public ParticleSystem[] playerParticle;
 
     public int[] playerAttackDagame;
     public int[] playerGroggyDagame;
 
     public int[] enemyAttackDagame;
     public int[] bossAttackDagame;
+
+    public Entity[] entity;
 
     // Start is called before the first frame update
     void Awake()
@@ -78,7 +80,6 @@ public class UIScript : MonoBehaviour
         {
             playerParticle[_index].Play();
         }
-
     }
     public void HpBarReset(int _hp,int _maxHp)
     {
@@ -136,4 +137,20 @@ public class UIScript : MonoBehaviour
     //    hpBarImage.enabled = true;
     //    StartCoroutine(ResetHp());
     //}
+    public void HitBoss(int _index,int _damage)
+    {
+        if (entity[_index] != null)
+        {
+            entity[_index].Hit(_damage);
+        }
+    }
+
+
+    public void EffectTest(int _index)
+    {
+        if (playerParticle[_index] != null)
+        {
+            playerParticle[_index].Play();
+        }
+    }
 }

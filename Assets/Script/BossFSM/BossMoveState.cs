@@ -6,11 +6,18 @@ using UnityEngine.Rendering;
 
 public class BossMoveState : BossState
 {
-    protected bool isMoving;
-    protected bool isIdle;
+    bool ableToBattle = false;
     float changeTime = 5f;
-    float EnterTimer = 0f;
-
+    float attackDealayTimer = 0f;
+    //float EnterTimer = 0f;
+    enum BossIdleState
+    {
+        Idle = 0,
+        Walk = 1,
+        Sleep = 2,
+        Scream = 3,
+    }
+    BossIdleState bossIdleState = BossIdleState.Idle;
     public BossMoveState(Boss _boss, int _currentStateNum) : base(_boss, _currentStateNum)
     {
         boss = _boss;
@@ -20,125 +27,93 @@ public class BossMoveState : BossState
     public override void Enter()
     {
         base.Enter();
-        EnterTimer = 0f;
-        if (boss.isSleep)
-        {
-            boss.SetState2(0);
-            boss.ableAttack = false;
-            return;
-        }
-        else if (boss.isScream)
-        {
-            boss.SetState2(4);
-            boss.isScream = false;
-            boss.animationTrigger = false;
-            return;
-
-        }
-        else
-        {
-            boss.SetState2(1);
-            boss.ableAttack = true;
-            return;
-        }
+        attackDealayTimer = startTime + boss.attackdealay;
+        //상태 체크하고 State2를 변경함으로써 애니메이션 변경
+        StateCheck();
+        
     }
     public override void Update()
     {
         base.Update();
-        if (boss.stateNum2 == 4 && boss.animationTrigger)
-        {
-            boss.SetState2(5);
-            boss.ableAttack = true;
-
-        }
-        if (boss.stateNum2 == 0 || boss.stateNum2 == 4)
-        {
-            return;
-        }
         IdleOrMoving();
-
+        //여기서 startTime을 변경함
     }
-
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-        if (boss.stateNum2 == 0 || boss.stateNum2 == 4)
-        {
-            return;
-        }
-        if (startTime+ boss.attackdealay < Time.time && boss.ableAttack)
-        {
-            Debug.Log("AttackChange");
-            boss.StateChange(boss.attackState);
-            return;
-        }
-
-        //if (boss.ableAttack && boss.AbleAttackCheck())
-        //{
-        //    boss.StateChange(boss.attackState);
-        //    return;
-        //}
-        if (isMoving)
-            boss.Move();
-        else
-        {
-            boss.ZeroHorizontal();
-        }
+        Action();
     }
-
-
     public override void Exit()
     {
         base.Exit();
-
     }
-    private void IdleOrMoving()
+
+
+    //내부에서만 사용하는 함수
+    private void Action()
     {
-        if (stateTimer > startTime + changeTime || EnterTimer ==0)
+        if (ableToBattle)
         {
-            EnterTimer = changeTime;
-            startTime = Time.time;
-            int ran = Random.Range(1, 2);
-            if (ran == 1)
+            //배틀상태로 진입이 가능한가
+            if (attackDealayTimer < Time.time)
             {
-                Move();
+                //공격 딜레이
+                boss.StateChange(boss.battleState);
+                return;
             }
-            else
+            //상태 체크 후 이동 
+            else if (bossIdleState == BossIdleState.Walk)
             {
-                Idle();
+                boss.BossChasePlayer();
+            }
+            else if (bossIdleState == BossIdleState.Idle)
+            {
+                boss.ZeroVelocity();
             }
         }
     }
-
-    private void Idle()
+    private void IdleOrMoving()
     {
-        //Debug.Log("Idle");
-        boss.SetState2(1);
-        //boss.ZeroVelocityX();
-        isMoving = false;
-        isIdle = true;
+        if (stateTimer > startTime + changeTime )
+        {
+            //너무 반복이면 지루하니까 랜덤값
+            changeTime = Random.Range(5f,10f);
+            //여기서 startTime을 변경함
+            startTime = Time.time;
+            StateCheck();
+        }
     }
-
-    private void Move()
+    private void StateCheck()
     {
-        //Debug.Log("Moving");
-        boss.SetState2(2);
-        isMoving = true;
-        isIdle = false;
+        //상태 체크하고 State2를 변경함으로써 애니메이션 변경
+        if (boss.isSleep)
+        {
+            bossIdleState = BossIdleState.Sleep;
+        }
+        else if (boss.isScream)
+        {
+            bossIdleState = BossIdleState.Scream;
+            boss.isScream = false;
+            //잠에서 깨면 바로 배틀로 가라고 -5 해줌
+            attackDealayTimer -= 5;
+            //이건 베이스 엔터에서 처리해줄거야
+            //boss.animationTrigger = false;
+        }
+        else
+        {
+            //위 두 상태가 아니라면 아이들 or 워크 
+            ableToBattle = true;
+            int ran = Random.Range(0, 2);
+            if (ran == 0)
+            {
+                bossIdleState = BossIdleState.Idle;
+            }
+            else if (ran == 1)
+            {
+                bossIdleState = BossIdleState.Walk;
+            }
+        }
+        boss.SetState2((int)bossIdleState);
     }
-
-    //void FF()
-    //{
-    //    if (boss.AbleAttack())
-    //    {
-    //        boss.animator.SetInteger("State", 2);
-    //        return;
-    //    }
-    //    else
-    //    {
-    //        boss.animator.SetInteger("State", 0);
-    //        return;
-
-    //    }
-    //}
+    
 }

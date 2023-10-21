@@ -6,14 +6,17 @@ using UnityEngine;
 
 public class Enemy : Entity
 {
-    public Rigidbody rb;
+    //public Rigidbody rb;
+    //public CharacterController CC;
+    public int iGroggyMax = 100;
+    public int iGroggy = 0;
     public float attackdealay = 2f;
-    public bool ableAttack = true;
+    //public bool ableAttack = true;
     public LayerMask playerLayer; // 플레이어 확인하기 위한 레이어 마스크
 
     public float ableAttackDis = 0f;
 
-    [SerializeField] protected  Gard gard;
+    //[SerializeField] protected  Gard gard;
 
     protected GameObject player;
     Vector3 originScale;
@@ -25,11 +28,11 @@ public class Enemy : Entity
     }
     protected override void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        //rb = GetComponent<Rigidbody>();
         base.Start();
         player = GameObject.Find("Player");
         GroundCheckDis += 0.2f;
-        attackDagame = UIScript.instance.enemyAttackDagame[0];
+        //attackDagame = UIScript.instance.enemyAttackDagame[0];
         originScale.x = transform.localScale.x;
         originScale.y = transform.localScale.y;
         originScale.z =  transform.localScale.z;
@@ -42,11 +45,11 @@ public class Enemy : Entity
     protected virtual void FixedUpdate()
     {
         stateMachine.FixedUpdate();
+        
     }
     public virtual void Hit(int _atk, int _groggy = 0)
     {
         //Debug.Log("Enemy _atk ,_groggy" + _atk + "," + _groggy);
-
         if (hp - _atk > 0)
         {
             hp -= _atk;
@@ -83,43 +86,41 @@ public class Enemy : Entity
     protected override void OnDrawGizmos()
     {
         base.OnDrawGizmos();
-        Gizmos.DrawRay(transform.position, Vector2.right * entityDir * ableAttackDis);
+        Gizmos.DrawRay(transform.position, new Vector3(1f,1f,1f)  * ableAttackDis);
     }
     public void ResetGroggy()
     {
+        isGroggy = true;
         iGroggy = 0;
     }
     public void GroggyUp(int _groggy)
     {
-        iGroggy += _groggy;
-        if (iGroggy >= iGroggyMax)
+        if (iGroggy + _groggy >= iGroggyMax)
         {
-            iGroggy = iGroggyMax;
-            isGroggy = true;
-
+            ResetGroggy();
+        }
+        else
+        {
+            iGroggy += _groggy;
         }
     }
-   
-    public bool AbleAttackCheck()
-    {
-        //공격범위 안에 있는지 
-        
 
-        RaycastHit2D _ableAttack = Physics2D.Raycast(transform.position, Vector2.right * entityDir, ableAttackDis, playerLayer);
-        return _ableAttack;
-    }
-    public bool AbleAttackCheckBack()
+    public bool IsGround(Transform transform)
     {
-        //공격범위 안에 있는지 
-        RaycastHit2D _ableAttack = Physics2D.Raycast(transform.position, Vector2.right * -entityDir, ableAttackDis, playerLayer);
-        return _ableAttack;
+        //발밑체크
+        return Physics.Raycast(transform.position, Vector3.down, GroundCheckDis, groundLayer);
     }
-    protected void OnTriggerEnter2D(Collider2D collision)
+    public bool DirIsGround(Transform transform)
     {
-        if (collision.tag == "Gard")
-        {
-            Hit(gard.gardDamage, gard.gardDamage);
-            UIScript.instance.PlayerEffect(1);
-        }
+        //진행방향의 바닥을 체크 앞 방향 디렉션으로 받아서 플러스해야지
+        return Physics.Raycast(transform.position, Vector3.down, GroundCheckDis, groundLayer);
     }
+    //protected void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.tag == "Gard")
+    //    {
+    //        Hit(gard.gardDamage, gard.gardDamage);
+    //        UIScript.instance.PlayerEffect(1);
+    //    }
+    //}
 }

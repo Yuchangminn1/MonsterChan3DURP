@@ -23,8 +23,7 @@ public class Entity : MonoBehaviour
     public LayerMask groundLayer; // 땅인지 확인하기 위한 레이어 마스크
 
     public int attackDagame;
-    public int iGroggyMax = 100;
-    public int iGroggy = 0;
+    
     public int Hp { get { return hp; } set { hp = value; } }
     public int HpMax { get { return hpMax; } private set { } }
 
@@ -40,6 +39,10 @@ public class Entity : MonoBehaviour
     protected virtual void Start()
     {
         animator = GetComponentInChildren<Animator>();
+        if(animator == null)
+        {
+            Debug.Log("Animator is Null");
+        }
         if(entityDir == null)
         {
             entityDir = transform.forward;

@@ -13,7 +13,6 @@ public class BossDeathState : BossState
     public override void Enter()
     {
         base.Enter();
-        boss.ableAttack = false;
     }
     public override void Update()
     {
@@ -26,8 +25,6 @@ public class BossDeathState : BossState
     public override void Exit()
     {
         //  base.Exit();
-        boss.ableAttack = true;
-
     }
 
 

@@ -43,7 +43,7 @@ public class MoveState : PlayerState
             player.StateChange(player.jumpState);
             return;
         }
-        Debug.Log(player.moveVec);
+        //Debug.Log(player.moveVec);
 
         if (Input.GetKeyDown(KeyCode.C) && (player.moveVec != Vector3.zero))
         {
