@@ -33,6 +33,7 @@ public class Boss : Enemy
     public float EarthquakeSpeed = 30f;
     public float playerDis = 0f;
     public Vector3 moveVec = Vector3.zero;
+    public float gravity = 0.1f;
     [SerializeField] Slider hpBar;
     [SerializeField] Image hpBarImage;
     //[SerializeField] BoxCollider2D boxCollider;
@@ -186,6 +187,19 @@ public class Boss : Enemy
     //    }
     //}
     #region RigidBody
+
+    public void Gravity()
+    {
+        if (!IsGround())
+        {
+            Vector3 tmp = Vector3.up;
+            tmp.y = -gravity;
+            gravity += 0.02f;
+            CC.Move(tmp);
+
+        }
+    }
+
     public Vector3 ToPlayerVec() => moveVec = (player.transform.position - transform.position).normalized;
    
     public void ZeroVelocity()
@@ -205,13 +219,17 @@ public class Boss : Enemy
 
         moveVec = ToPlayerVec();
         moveVec.y = 0f;
+        
+        //CC.SimpleMove(moveVec * moveSpeed);
         CC.Move(moveVec * moveSpeed);
 
     }
     public void LookPlayer()
     {
         //if() { }
-        transform.LookAt(player.transform.position);
+        Vector3 tmp = player.transform.position;
+        //tmp.y = 0f;
+        transform.LookAt(tmp);
     }
     public void Earthquake()
     {

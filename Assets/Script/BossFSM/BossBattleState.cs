@@ -96,7 +96,6 @@ public class BossBattleState : BossState
         //boss.LookPlayer();
 
         AttackCheck();
-
         //공격모션이 끝났으면 초기화 논을 아이들로 해야할듯
         if (boss.animationTrigger)
         {

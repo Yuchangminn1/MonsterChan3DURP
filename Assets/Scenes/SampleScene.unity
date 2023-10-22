@@ -937,8 +937,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   attackDagame: 0
-  iGroggyMax: 100
-  iGroggy: 0
   hp: 0
   hpMax: 0
   GroundCheckDis: 0.2
@@ -1362,7 +1360,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1231893383}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.467, z: 0}
+  m_LocalPosition: {x: 0, y: -1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3238,7 +3236,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1358402826}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.26, y: 2.45, z: 0}
+  m_LocalPosition: {x: 0, y: 5.94, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3271,7 +3269,7 @@ CharacterController:
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: -0.85, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1358402830
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3294,13 +3292,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   attackDagame: 0
-  iGroggyMax: 100
-  iGroggy: 0
   hp: 0
   hpMax: 200
   GroundCheckDis: 0.65
+  iGroggyMax: 100
+  iGroggy: 0
   attackdealay: 2
-  ableAttack: 1
   playerLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -3314,6 +3311,7 @@ MonoBehaviour:
   EarthquakeSpeed: 30
   playerDis: 0
   moveVec: {x: 0, y: 0, z: 0}
+  gravity: 1
   hpBar: {fileID: 735910748296325639}
   hpBarImage: {fileID: 3199074116251146626}
   _collider: []

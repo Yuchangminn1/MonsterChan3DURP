@@ -34,6 +34,7 @@ public class BossState : EntityState
         if (!boss.isdead)
         {
             base.FixedUpdate();
+            
         }
     }
     public override void Exit()

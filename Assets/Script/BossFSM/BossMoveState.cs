@@ -30,7 +30,9 @@ public class BossMoveState : BossState
         attackDealayTimer = startTime + boss.attackdealay;
         //상태 체크하고 State2를 변경함으로써 애니메이션 변경
         StateCheck();
-        
+
+        //boss.LookPlayer();
+
     }
     public override void Update()
     {
@@ -42,6 +44,8 @@ public class BossMoveState : BossState
     {
         base.FixedUpdate();
         Action();
+        
+
     }
     public override void Exit()
     {
@@ -52,6 +56,7 @@ public class BossMoveState : BossState
     //내부에서만 사용하는 함수
     private void Action()
     {
+        boss.Gravity();
         if (ableToBattle)
         {
             //배틀상태로 진입이 가능한가
@@ -70,6 +75,7 @@ public class BossMoveState : BossState
             {
                 boss.ZeroVelocity();
             }
+            
         }
     }
     private void IdleOrMoving()
