@@ -131,25 +131,26 @@ public class PlayerController : Entity
         //    Gizmos.DrawRay(new Vector2(groundChheckObject.transform.position.x + entityDir, transform.position.y - 0.4f), Vector2.down * GroundCheckDis);
         //}
     }
-    public void Hit(Collider2D collision)
+    public void Hit(Collider collision,int _damage)
     {
         if (!isDodge)
         {
-            BossAnimationTrigger bossanima = collision.gameObject.GetComponentInParent<BossAnimationTrigger>();
-            
-            if (bossanima.attackDamage == 0) return;
+            //BossAnimationTrigger bossanima = collision.gameObject.GetComponentInParent<BossAnimationTrigger>();
+            Boss boss = collision.gameObject.GetComponentInParent<Boss>();
 
-            base.Hit(bossanima.attackDamage);
+            //if (bossanima.attackDamage == 0) return;
+
+            base.Hit(_damage);
             if (isdead)
             {
                 StateChange(deathState);
                 UIScript.instance.HpBarValue(Hp, HpMax);
                 return;
             }
-            else if (bossanima.attackEffect == "Knockback")
-            {
-                PlayerKnockback(collision);
-            }
+            //else if (bossanima.attackEffect == "Knockback")
+            //{
+            //    PlayerKnockback(collision);
+            //}
             UIScript.instance.HpBarValue(Hp, HpMax);
             StateChange(hitState);
         }
@@ -190,7 +191,7 @@ public class PlayerController : Entity
 
     //}
 
-    public void PlayerKnockback(Collider2D collision)
+    public void PlayerKnockback(Collider collision)
     {
         float _bossAttackDis;
         if (collision.transform.position.x > transform.position.x)
@@ -255,6 +256,20 @@ public class PlayerController : Entity
     //}
     void OnTriggerEnter(Collider collision)
     {
-        Debug.Log(collision.tag);
+        if (collision.tag == "Enemy")
+        {
+            Enemy enemy = collision.GetComponentInParent<Enemy>();
+            Hit(collision, enemy.attackDagame);
+
+            //Enemy enemy = collision.GetComponentInParent<Enemy>();
+            //int damamge = enemy.attackDagame;
+            //Debug.Log("damamge = " + damamge);
+            //Debug.Log("damamge = " + damamge);
+
+            //Debug.Log("damamge = " + damamge);
+
+            //Debug.Log("damamge = " + damamge);
+            //Hit(enemy.attackDagame);
+        }
     }
 }

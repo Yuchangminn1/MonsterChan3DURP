@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BossAnimationTrigger : MonoBehaviour
 {
+    
+
     Animator animator;
     [SerializeField] ParticleSystem[] fireBreathR;
     [SerializeField] ParticleSystem[] fireBreathL;
@@ -24,8 +26,13 @@ public class BossAnimationTrigger : MonoBehaviour
         }
         boss = GetComponentInParent<Boss>();
         animator = GetComponent<Animator>();
+        //boxcol_Initialize
+        
+
 
     }
+    
+
     void shootFireBall()
     {
         foreach (ParticleSystem _fireBreath in fireBreathR)
@@ -52,31 +59,14 @@ public class BossAnimationTrigger : MonoBehaviour
 
     void ColliderOn()
     {
-        //damageCol.enabled = true;
-        ;
-        //if (boxCollider[_index] != null)
-        //{
-        //    boss.ZeroVelocityX();
-        //    boxCollider[_index].enabled = true;
-        //}
-        //else
-        //{
-        //    Debug.Log("boxCollider is Null");
-        //}
+        boss.BoxColOn();
+
         Debug.Log("ColOn");
     }
     void ColliderOff()
     {
-        // damageCol.enabled = false;
-        ;
-        //if (boxCollider[_index] != null)
-        //{
-        //    boxCollider[_index].enabled   false;
-        //}
-        //else
-        //{
-        //    Debug.Log("boxCollider is Null");
-        //}
+        boss.BoxColOff();
+        
         Debug.Log("ColOff");
 
     }
@@ -101,4 +91,5 @@ public class BossAnimationTrigger : MonoBehaviour
     {
         boss.Earthquake();
     }
+    
 }

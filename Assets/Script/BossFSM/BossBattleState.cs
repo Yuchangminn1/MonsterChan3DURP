@@ -81,6 +81,7 @@ public class BossBattleState : BossState
         {
             BossAttack(playerDis);
         }
+        boss.SetDamageCol((int)bossAttackPattern);
     }
 
     public override void Update()
@@ -152,21 +153,21 @@ public class BossBattleState : BossState
         if (playerDis <= 20f)
         {
             meleeAttack = true;
-            int _value = Random.Range(1, 4);// 0 None   1 깨물기 2 꼬리치기 3 뒤로 점프 4 브레스 5 앞으로 점프 땅찍기
-            if (_value == 1)
+            int _value = Random.Range(1, 8);// 0 None   1 깨물기 2 꼬리치기 3 뒤로 점프 4 브레스 5 앞으로 점프 땅찍기
+            if (_value >= 1 && _value < 4)
             {
                 bossAttackPattern = BossAttackPattern.BasicAttack;
                 bossAttackDis = BossAttackDis.BasicAttack;
                 bossAttackDamage = BossAttackDamage.BasicAttack;
             }
             
-            else if (_value == 3)
+            else if (_value == 7)
             {
                 bossAttackPattern = BossAttackPattern.BackStep;
                 bossAttackDis = BossAttackDis.BackStep;
                 bossAttackDamage = BossAttackDamage.None;
             }
-            else if (_value == 2)
+            else if (_value >= 4 && _value < 7)
             {
                 bossAttackPattern = BossAttackPattern.TailAttack;
                 bossAttackDis = BossAttackDis.TailAttack;

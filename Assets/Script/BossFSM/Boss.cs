@@ -9,6 +9,13 @@ using UnityEngine.UI;
 public class Boss : Enemy
 {
     public CharacterController CC;
+
+    //공격
+    public Vector3[] boxColCenter;
+    public Vector3[] boxColSize;
+    public BoxCollider damageBoxCollider;
+
+
     //플레이어 정보를 옵저버 패턴으로 매니저 만들어서 관리해볼까 
     //public PlayerController player;
     //FSM
@@ -23,7 +30,6 @@ public class Boss : Enemy
     //test
     bool isIN = false;
     [SerializeField] BossAnimationTrigger bossAnimationTrigger;
-    int bossDamage = 20;
     //public bool isableMove = false;
 
     public bool isScream = false;
@@ -38,7 +44,8 @@ public class Boss : Enemy
     [SerializeField] Image hpBarImage;
     //[SerializeField] BoxCollider2D boxCollider;
 
-    public Vector4[] _collider;
+    
+
 
     protected override void Awake()
     {
@@ -50,29 +57,37 @@ public class Boss : Enemy
         hitState = new BossHitState(this, 5);
         deathState = new BossDeathState(this, 6);
         #endregion
-        _collider = new Vector4[6];
-        _collider[0] = Vector4.one;
+        
 
-        //basicAttack
-        _collider[1] = new Vector4(4f, 5f, 4f, 2.3f);
-        //TailAttack
-        _collider[2] = new Vector4(10f, 3f, 2f, 0.8f);
-        //BackStep
-        _collider[3] = new Vector4(0.1f, 0.1f, 0.1f, 0.1f);
-        //Breath
-        _collider[4] = new Vector4(20f, 6f, 12f, 2.5f);
-        //Earth뭐시기
-        _collider[5] = new Vector4(1f, 1f, 1f, 1f);
+        //BoxColCenter[3] = new Vector3(0, 0, 0);
+        //BoxColSize  [3] = new Vector3(0, 0, 0);
+
+        //_collider = new Vector4[6];
+        //_collider[0] = Vector4.one;
+
+        ////basicAttack
+        //_collider[1] = new Vector4(4f, 5f, 4f, 2.3f);
+        ////TailAttack
+        //_collider[2] = new Vector4(10f, 3f, 2f, 0.8f);
+        ////BackStep
+        //_collider[3] = new Vector4(0.1f, 0.1f, 0.1f, 0.1f);
+        ////Breath
+        //_collider[4] = new Vector4(20f, 6f, 12f, 2.5f);
+        ////Earth뭐시기
+        //_collider[5] = new Vector4(1f, 1f, 1f, 1f);
         moveSpeed *= Time.deltaTime;
         BackStepSpeed *= Time.deltaTime;
         EarthquakeSpeed *= Time.deltaTime;
+        DamageColliderInitialize();
     }
 
     protected override void Start()
     {
         base.Start();
+        attackDagame = 20;
+
         CC = GetComponent<CharacterController>();
-        if(CC == null)
+        if (CC == null)
         {
             Debug.Log("CC is Null");
         }
@@ -83,7 +98,7 @@ public class Boss : Enemy
         }
         StateChange(moveState);
         //Flip();
-        
+
 
     }
 
@@ -102,7 +117,7 @@ public class Boss : Enemy
         if (isIN)
         {
             BossBackStep();
-            isIN  = false;
+            isIN = false;
         }
     }
     public override void Hit(int _atk, int _groggy = 0)
@@ -130,7 +145,7 @@ public class Boss : Enemy
             StateChange(moveState);
             return;
         }
-        
+
     }
     #region RayCastCheck
     public bool IsGround() => IsGround(transform);
@@ -201,10 +216,10 @@ public class Boss : Enemy
     }
 
     public Vector3 ToPlayerVec() => moveVec = (player.transform.position - transform.position).normalized;
-   
+
     public void ZeroVelocity()
     {
-        if (isStop || playerDis<1f) return;
+        if (isStop || playerDis < 1f) return;
         CC.Move(Vector3.zero);
     }
     public void BossChasePlayer()
@@ -219,7 +234,7 @@ public class Boss : Enemy
 
         moveVec = ToPlayerVec();
         moveVec.y = 0f;
-        
+
         //CC.SimpleMove(moveVec * moveSpeed);
         CC.Move(moveVec * moveSpeed);
 
@@ -228,7 +243,7 @@ public class Boss : Enemy
     {
         //if() { }
         Vector3 tmp = player.transform.position;
-        //tmp.y = 0f;
+        tmp.y = 0f;
         transform.LookAt(tmp);
     }
     public void Earthquake()
@@ -240,9 +255,9 @@ public class Boss : Enemy
         //돌진
         moveVec = ToPlayerVec();
         moveVec.y = 0f;
-        Vector3 ActionVec = transform.forward * (GameManager.instance.DistanceToPlayer(transform.position)-4.5f);
+        Vector3 ActionVec = transform.forward * (GameManager.instance.DistanceToPlayer(transform.position) - 4.5f);
         StartCoroutine(moveFixedUpdate(ActionVec));
-        
+
     }
     public void BossBackStep()
     {
@@ -252,16 +267,16 @@ public class Boss : Enemy
         moveVec = transform.forward;
         moveVec.y = 0f;
         Vector3 ActionVec = moveVec * -BackStepSpeed;
-        StartCoroutine(moveFixedUpdate(ActionVec* 50f));
+        StartCoroutine(moveFixedUpdate(ActionVec * 50f));
     }
     IEnumerator moveFixedUpdate(Vector3 _Vector)
     {
         float _i = 0;
         float _y = 0.2f;
         float divNum = 50;
-        while (_i< divNum)
+        while (_i < divNum)
         {
-            if(_i < divNum / 2)
+            if (_i < divNum / 2)
             {
                 _Vector.y = _y;
             }
@@ -269,11 +284,11 @@ public class Boss : Enemy
             {
                 _Vector.y = -_y;
             }
-            CC.Move(_Vector/ divNum);
+            CC.Move(_Vector / divNum);
             _i++;
             yield return new FixedUpdate();
         }
-        
+
 
     }
     //public void Move()
@@ -318,4 +333,39 @@ public class Boss : Enemy
         //콜라이더
         bossAnimationTrigger._index = _num;
     }
+
+    //공격 
+    public void DamageColliderInitialize()
+    {
+        boxColCenter = new Vector3[6]; //요거 인자는 좀 고민
+        boxColSize = new Vector3[6];
+
+        boxColCenter[0] = Vector3.zero;
+        boxColSize[0] = Vector3.zero;
+
+        boxColCenter[1] = new Vector3(-1.5f, 1.5f, -1f);
+        boxColSize[1] = new Vector3(3f, 2f, 5f);
+            
+        boxColCenter[2] = new Vector3(-1f, 0f, -1f);
+        boxColSize[2] = new Vector3(8f, 2f, 6f);
+
+        boxColCenter[3] = Vector3.zero;
+        boxColSize[3] = new Vector3(12f, 2f, 2.5f);
+
+        boxColCenter[4] = Vector3.zero;
+        boxColSize[4] = new Vector3(12f, 2f, 2.5f);
+
+        boxColCenter[5] = Vector3.zero;
+        boxColSize[5] = new Vector3(2f, 2f, 0.8f);
+        
+    }
+    public void SetDamageCol(int _index)
+    {
+        damageBoxCollider.center = boxColCenter[_index];
+        damageBoxCollider.size = boxColSize[_index];
+    }
+    public void BoxColOn() => damageBoxCollider.enabled = true;
+    
+    public void BoxColOff() => damageBoxCollider.enabled = false;
+    
 }
